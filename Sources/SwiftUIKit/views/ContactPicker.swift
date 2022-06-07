@@ -16,6 +16,9 @@ Presents a CNContactPickerViewController view modally.
     - onSelectContact: Use this callback for single contact selection
     - onSelectContacts: Use this callback for multiple contact selections
 */
+
+public protocol PickerCoordinator: CNContactPickerDelegate {}
+
 public struct ContactPicker: UIViewControllerRepresentable {
     @Binding var showPicker: Bool
     @State private var viewModel = ContactPickerViewModel()
@@ -62,7 +65,7 @@ public struct ContactPicker: UIViewControllerRepresentable {
         }
     }
     
-    public func makeCoordinator() -> Coordinator {
+    public func makeCoordinator() -> PickerCoordinator {
         if self.onSelectContacts != nil {
             return MultipleSelectionCoordinator(self)
         } else {
@@ -70,7 +73,7 @@ public struct ContactPicker: UIViewControllerRepresentable {
         }
     }
     
-    public final class SingleSelectionCoordinator: NSObject, Coordinator {
+    public final class SingleSelectionCoordinator: NSObject, PickerCoordinator {
         var parent : ContactPicker
         
         init(_ parent: ContactPicker){
@@ -88,7 +91,7 @@ public struct ContactPicker: UIViewControllerRepresentable {
         }
     }
     
-    public final class MultipleSelectionCoordinator: NSObject, Coordinator {
+    public final class MultipleSelectionCoordinator: NSObject, PickerCoordinator {
         var parent : ContactPicker
         
         init(_ parent: ContactPicker){
@@ -112,6 +115,6 @@ class ContactPickerViewModel {
     var vc: CNContactPickerViewController?
 }
 
-public protocol Coordinator: CNContactPickerDelegate {}
+
 
 public class _DummyViewController: UIViewController {}
